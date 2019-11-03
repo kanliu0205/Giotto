@@ -249,8 +249,14 @@ calculate_spatial_genes_python <- function(gobject,
   spatlocs = as.matrix(gobject@spatial_locs[,.(sdimx, sdimy)])
 
   # python path
-  if(is.null(python_path)) {
-    python_path = system('which python', intern = T)
+  if(.Platform$OS.type == "unix") {
+    if(is.null(python_path)) {
+      python_path = system('which python', intern = T)
+    }
+  } else {
+    if(is.null(python_path)) {
+      python_path = system('where python', intern = T)
+    }
   }
 
   ## prepare python path and louvain script
@@ -646,11 +652,11 @@ showPattern <- function(spatPatObj,
                         y_ticks = NULL,
                         z_ticks = NULL,
                         show_plot = F) {
-  
+
   if(!'spatPatObj' %in% class(spatPatObj)) {
     stop('\n spatPatObj needs to be the output from detectSpatialPatterns \n')
   }
-  
+
   # select PC and subset data
   selected_PC = paste0('Dim.', dimension)
   PC_DT = spatPatObj$pca_matrix_DT
@@ -658,18 +664,18 @@ showPattern <- function(spatPatObj,
     stop('\n This dimension was not found in the spatial pattern object \n')
   }
   PC_DT = PC_DT[,c(selected_PC, 'loc_ID'), with = F]
-  
+
   # annotate grid with PC values
   annotated_grid = merge(spatPatObj$spatial_grid, by.x = 'gr_name', PC_DT, by.y = 'loc_ID')
-  
+
   # trim PC values
   if(!is.null(trim)) {
     boundaries = stats::quantile(annotated_grid[[selected_PC]], probs = trim)
     annotated_grid[[selected_PC]][annotated_grid[[selected_PC]] < boundaries[1]] = boundaries[1]
     annotated_grid[[selected_PC]][annotated_grid[[selected_PC]] > boundaries[2]] = boundaries[2]
-    
+
   }
-  
+
   # 2D-plot
   if(plot_dim == 2){
     dpl <- ggplot2::ggplot()
@@ -685,20 +691,20 @@ showPattern <- function(spatPatObj,
                                 plot.title = element_text(hjust = 0.5))
     dpl <- dpl + ggplot2::labs(x = 'x coordinates', y = 'y coordinates')
   }
-  
+
   else if (plot_dim == 3){
-    
+
     annotated_grid <- data.table(annotated_grid)
     annotated_grid[,center_x:=(x_start+x_end)/2]
     annotated_grid[,center_y:=(y_start+y_end)/2]
     annotated_grid[,center_z:=(z_start+z_end)/2]
-    
-    
+
+
     axis_scale = match.arg(axis_scale, c("cube","real","custom"))
-    
+
     ratio = plotly_axis_scale_3D(annotated_grid,sdimx = "center_x",sdimy = "center_y",sdimz = "center_z",
                                  mode = axis_scale,custom_ratio = custom_ratio)
-    
+
     dpl <- plotly::plot_ly(type = 'scatter3d',
                            x = annotated_grid$center_x, y = annotated_grid$center_y, z = annotated_grid$center_z,
                            color = annotated_grid[[selected_PC]],marker = list(size = point_size),
@@ -712,15 +718,15 @@ showPattern <- function(spatPatObj,
                          y=ratio[[2]],
                          z=ratio[[3]])))
     dpl <- dpl %>% plotly::colorbar(title = paste(paste("dim.",dimension,sep = ""),"genes", sep = " "))
-    
+
   }
-  
-  
+
+
   if(show_plot == TRUE) {
     print(dpl)
   }
   return(dpl)
-  
+
 }
 
 
@@ -866,8 +872,14 @@ Spatial_DE <- function(gobject = NULL,
                        python_path = NULL){
 
   ## python path
-  if(is.null(python_path)) {
-    python_path = system('which python', intern = T)
+  if(.Platform$OS.type == "unix") {
+    if(is.null(python_path)) {
+      python_path = system('which python', intern = T)
+    }
+  } else {
+    if(is.null(python_path)) {
+      python_path = system('where python', intern = T)
+    }
   }
 
   ## source python file
@@ -942,8 +954,14 @@ Spatial_AEH <- function(gobject = NULL,
 
 
   ## python path
-  if(is.null(python_path)) {
-    python_path = system('which python', intern = T)
+  if(.Platform$OS.type == "unix") {
+    if(is.null(python_path)) {
+      python_path = system('which python', intern = T)
+    }
+  } else {
+    if(is.null(python_path)) {
+      python_path = system('where python', intern = T)
+    }
   }
 
   ## source python file

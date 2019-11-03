@@ -50,14 +50,8 @@ doLeidenCluster = function(gobject,
 
   ## check or make paths
   # python path
-  if(.Platform$OS.type == "unix") {
-    if(is.null(python_path)) {
-      python_path = system('which python', intern = T)
-    }
-  } else {
-    if(is.null(python_path)) {
-      python_path = system('where python', intern = T)
-    }
+  if(is.null(python_path)) {
+    python_path = system('which python', intern = T)
   }
 
   ## prepare python path and louvain script

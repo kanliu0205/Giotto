@@ -273,9 +273,11 @@ createHeatmap_DT <- function(gobject,
   } else if(gene_order == 'custom') {
 
     if(is.null(gene_custom_order)) {
-      stop('\n with custom gene order the gene_custom_order parameter needs to be provided \n')
+      # stop('\n with custom gene order the gene_custom_order parameter needs to be provided \n')
     }
-    subset_values_DT[, genes := factor(genes, gene_custom_order)]
+    else{
+      subset_values_DT[, genes := factor(genes, gene_custom_order)]
+    }
 
   }
 

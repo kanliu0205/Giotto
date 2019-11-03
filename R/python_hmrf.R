@@ -40,8 +40,14 @@ doHMRF <- function(gobject,
 
   ## check or make paths
   # python path
-  if(is.null(python_path)) {
-    python_path = system('which python')
+  if(.Platform$OS.type == "unix") {
+    if(is.null(python_path)) {
+      python_path = system('which python', intern = T)
+    }
+  } else {
+    if(is.null(python_path)) {
+      python_path = system('where python', intern = T)
+    }
   }
 
   ## reader.py and get_result.py paths
